@@ -50,8 +50,9 @@ ssize_t getLine( ReadBuf *readBuf,
   struct timeval start, tv;
 
   /* reserve space for string terminator */
-  --maxLen;
-  if( maxLen < 0 ) {
+  int maxLenInt = maxLen;
+  --maxLen;     --maxLenInt;
+  if( maxLenInt < 0 ) {     // Always False
     return -1;
   }
 
@@ -65,13 +66,13 @@ ssize_t getLine( ReadBuf *readBuf,
 
       if( timeoutMicros >= 0 ) {
 	/* figure out how much time is left for reading */
-	uint64_t timeLeft;
+	int64_t timeLeft;
 
 	timeLeft = timeoutMicros;
 	if( haveStartTime ) {
 
 	  gettimeofday( &tv, NULL );
-	  timeLeft -= (uint64_t)( tv.tv_sec - start.tv_sec ) * 1000000
+	  timeLeft -= (int64_t)( tv.tv_sec - start.tv_sec ) * 1000000
 	    + ( tv.tv_usec - start.tv_usec );
 	  if( timeLeft < 0 ) {
 

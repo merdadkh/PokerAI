@@ -1,7 +1,7 @@
 
 #include "ProbEval.h"
 
-inline bool FlushSymmType::operator< (const FlushSymmType& rhs) const {
+bool FlushSymmType::operator< (const FlushSymmType& rhs) const {
 	if (drawType[0] < rhs.drawType[0])										return true;
 	else if (drawType[0] == rhs.drawType[0]) {
 		if (drawType[1] < rhs.drawType[1])									return true;
@@ -35,21 +35,15 @@ string FlushSymmType::strStat() {
 		case FlushDraw:	drawStr = "FD";		break;
 		case Flush:		drawStr = "FL";			break;
 		}
-		string HighCardStr;
-		switch (HigherCard[i])
-		{
-		case true:		HighCardStr = "H";		break;
-		case false:		HighCardStr = "L";		break;
-		}
+		
+                string HighCardStr = (HigherCard[i] ? "H" : "L");
 		out = out + drawStr + HighCardStr + "_";
 
 	}
 
-	switch (SameSuit)
-	{
-	case true:		out += "SS";		break;
-	case false:		out += "OS";		break;
-	}
+	
+        out += (SameSuit ? "SS" : "OS");	
+	
 
 	return out;
 }
@@ -295,7 +289,7 @@ unsigned int CProbEval::FindRank2PocketMask(unsigned int s) {
 			return it->first;
 
 	cerr << "The index is not correct";
-	return NULL;
+	return 0;
 }
 
 unsigned long long CProbEval::FindRank2FlopMask(unsigned int s) {
@@ -305,7 +299,7 @@ unsigned long long CProbEval::FindRank2FlopMask(unsigned int s) {
 			return it->first;
 
 	cerr << "The index is not correct";
-	return NULL;
+	return 0;
 }
 
 unsigned int CProbEval::HandUnsuitRank91_Index(unsigned long long Pocket) {
@@ -335,7 +329,7 @@ vector<vector<double> >* CProbEval::LoadFlopProb_fromFile(unsigned long long Flo
 	///////////////////// Loading Files to Vectors
 	ifstream inFile;
 	string filePath;
-	string basePath = "C:/Users/khatami/Google Drive/Mehrdad/Poker/HandEvalCpp/HandEvalCpp/PokerProj/FlopFilesFinal/";
+	string basePath = "/Users/Mehrdad/GitHub/PokerAI/FlopFilesFinal/";
 	string line;
 	char dummy[20];
 	for (size_t s = 0; s < suitSymmSize; s++)
@@ -354,6 +348,9 @@ vector<vector<double> >* CProbEval::LoadFlopProb_fromFile(unsigned long long Flo
 			}
 			inFile.close();
 		}
+                else{
+                    cout << "Flop Files not opened." << endl;
+                }
 	}
 
 	/////////////////////////////////////////////// Maping the loaded vectors to 1326x1326 Vector

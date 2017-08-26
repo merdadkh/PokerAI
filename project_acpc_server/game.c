@@ -252,24 +252,24 @@ Game *readGame( FILE *file )
 
   if( game->numPlayers < 2 || game->numPlayers > MAX_PLAYERS ) {
 
-    fprintf( stderr, "invalid number of players: %"PRIu8"\n",
-	     game->numPlayers );
+    fprintf( stderr, "invalid number of players: %" PRIu8 "\n",
+	     (unsigned char)game->numPlayers );
     free( game );
     return NULL;
   }
 
   if( stackRead < game->numPlayers ) {
 
-    fprintf( stderr, "only read %"PRIu8" stack sizes, need %"PRIu8"\n",
-	    stackRead, game->numPlayers );
+    fprintf( stderr, "only read %" PRIu8 " stack sizes, need %" PRIu8 "\n",
+	    (unsigned char)stackRead, (unsigned char)game->numPlayers );
     free( game );
     return NULL;
   }
 
   if( blindRead < game->numPlayers ) {
 
-    fprintf( stderr, "only read %"PRIu8" blinds, need %"PRIu8"\n",
-	    blindRead, game->numPlayers );
+    fprintf( stderr, "only read %" PRIu8 " blinds, need %" PRIu8 "\n",
+	    (unsigned char)blindRead, (unsigned char)game->numPlayers );
     free( game );
     return NULL;
   }
@@ -286,8 +286,8 @@ Game *readGame( FILE *file )
   if( game->bettingType == limitBetting
       && raiseSizeRead < game->numRounds ) {
 
-    fprintf( stderr, "only read %"PRIu8" raise sizes, need %"PRIu8"\n",
-	     raiseSizeRead, game->numRounds );
+    fprintf( stderr, "only read %" PRIu8 " raise sizes, need %" PRIu8 "\n",
+	     (unsigned char)raiseSizeRead, (unsigned char)game->numRounds );
     free( game );
     return NULL;
   }
@@ -330,8 +330,8 @@ Game *readGame( FILE *file )
 
   if( boardCardsRead < game->numRounds ) {
 
-    fprintf( stderr, "only read %"PRIu8" board card numbers, need %"PRIu8"\n",
-	    boardCardsRead, game->numRounds );
+    fprintf( stderr, "only read %" PRIu8 " board card numbers, need %" PRIu8 "\n",
+	    (unsigned char)boardCardsRead, (unsigned char)game->numRounds );
     free( game );
     return NULL;
   }
@@ -399,7 +399,7 @@ void printGame( FILE *file, const Game *game )
 
       fprintf( file, "firstPlayer =" );
       for( i = 0; i < game->numRounds; ++i ) {
-	fprintf( file, " %"PRIu8, game->firstPlayer[ i ] + 1 );
+	fprintf( file, " %" PRIu8 , (unsigned char)(game->firstPlayer[ i ] + 1) );
       }
       fprintf( file, "\n" );
 
@@ -1659,7 +1659,7 @@ int readAction( const char *string, const Game *game, Action *action )
   int c, r;
 
   action->type = charToAction[ (uint8_t)string[ 0 ] ];
-  if( action->type < 0 ) {
+  if( (int)action->type < 0 ) {
     return -1;
   }
   c = 1;

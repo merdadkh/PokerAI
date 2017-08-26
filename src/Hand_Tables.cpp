@@ -4,7 +4,7 @@
 ////////////////////////////////////////////
 ////////////////// Tables
 
-const unsigned __int8 CHandEval::bits[] =
+const uint8_t CHandEval::bits[] =
 {
 	0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4,  /* 0   - 15  */
 	1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,  /* 16  - 31  */
@@ -24,7 +24,7 @@ const unsigned __int8 CHandEval::bits[] =
 	4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8   /* 240 - 255 */
 };
 
-const unsigned __int16 CHandEval::nBitsAndStrTable[] =
+const uint16_t CHandEval::nBitsAndStrTable[] =
 {
 	0x00 ,
 	0x04 ,
@@ -8221,7 +8221,7 @@ const unsigned __int16 CHandEval::nBitsAndStrTable[] =
 };
 
 
-const unsigned __int16 CHandEval::nBitsTable[] =
+const uint16_t CHandEval::nBitsTable[] =
 {
 	0x00 ,
 	0x01 ,
@@ -16422,7 +16422,7 @@ const unsigned __int16 CHandEval::nBitsTable[] =
 
 // This table returns a straights starting card (0 if not a straight)
 /// <exclude/>
-const unsigned __int16 CHandEval::straightTable[] =
+const uint16_t CHandEval::straightTable[] =
 {
 	0x00 ,
 	0x00 ,
@@ -24619,7 +24619,7 @@ const unsigned __int16 CHandEval::straightTable[] =
 };
 
 
-const unsigned __int32 CHandEval::topFiveCardsTable[] =
+const uint32_t CHandEval::topFiveCardsTable[] =
 {
 	0x00000000 ,
 	0x00000000 ,
@@ -32816,7 +32816,7 @@ const unsigned __int32 CHandEval::topFiveCardsTable[] =
 };
 
 
-const unsigned __int16 CHandEval::topCardTable[] =
+const uint16_t CHandEval::topCardTable[] =
 {
 	0x00 ,
 	0x00 ,
@@ -41123,7 +41123,7 @@ const char CHandEval::suitchar[] =
 	's', 's', 's', 's', 's', 's', 's', 's', 's', 's', 's', 's', 's',
 };
 
-const __int8 CHandEval::pocket2HighCardRankTable[] =
+const int8_t CHandEval::pocket2HighCardRankTable[] =
 {
 	-1,
 	0,

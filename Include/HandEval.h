@@ -2,8 +2,6 @@
 #ifndef Hand_EVAL_H
 #define Hand_EVAL_H
 
-using namespace std;
-
 #include <string>
 #include <assert.h>
 #include "Utilities.h"
@@ -162,17 +160,17 @@ public:
 public:
 
 	/// <summary> Bit count table from snippets.org </summary>
-	static const unsigned __int8 bits[];
-	static const unsigned __int16 nBitsAndStrTable[];
-	static const unsigned __int16 topCardTable[];
-	static const unsigned __int32 topFiveCardsTable[];
-	static const __int8 pocket2HighCardRankTable[];
+	static const uint8_t bits[];
+	static const uint16_t nBitsAndStrTable[];
+	static const uint16_t topCardTable[];
+	static const uint32_t topFiveCardsTable[];
+	static const int8_t pocket2HighCardRankTable[];
 
 	/// <summary> This table returns a straights starting card (0 if not a straight) </summary>
-	static const unsigned __int16 straightTable[];
+	static const uint16_t straightTable[];
 
 	/// <summary>  A table representing the bit count for a 13 bit integer. </summary>
-	static const unsigned __int16 nBitsTable[];
+	static const uint16_t nBitsTable[];
 	
 	/// <summary> Converts card number into the card rank text string. </summary>
 	static const string ranktbl[];

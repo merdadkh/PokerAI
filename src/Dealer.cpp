@@ -1,20 +1,27 @@
 /*
-Copyright (C) 2011 by the Computer Poker Research Group, University of Alberta
-*/
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
-#include <stdlib.h>
-#include <stdio.h>
-#define __STDC_LIMIT_MACROS
-#include <stdint.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <sys/select.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <getopt.h>
-#include "game.h"
-#include "net.h"
+/* 
+ * File:   Dealer.cpp
+ * Author: Mehrdad
+ * 
+ * Created on August 25, 2017, 10:23 AM
+ */
+
+#include "Dealer.h"
+
+Dealer::Dealer() {
+}
+
+Dealer::Dealer(const Dealer& orig) {
+}
+
+Dealer::~Dealer() {
+}
+
 
 
 /* the ports for players to connect to will be printed on standard out
@@ -37,25 +44,9 @@ Copyright (C) 2011 by the Computer Poker Research Group, University of Alberta
    or EXIT_FAILURE on any failure */
 
 
-#define DEFAULT_MAX_INVALID_ACTIONS UINT32_MAX
-#define DEFAULT_MAX_RESPONSE_MICROS 600000000
-#define DEFAULT_MAX_USED_HAND_MICROS 600000000
-#define DEFAULT_MAX_USED_PER_HAND_MICROS 7000000
 
 
-typedef struct {
-  uint32_t maxInvalidActions;
-  uint64_t maxResponseMicros;
-  uint64_t maxUsedHandMicros;
-  uint64_t maxUsedMatchMicros;
-
-  uint32_t numInvalidActions[ MAX_PLAYERS ];
-  uint64_t usedHandMicros[ MAX_PLAYERS ];
-  uint64_t usedMatchMicros[ MAX_PLAYERS ];
-} ErrorInfo;
-
-
-static void printUsage( FILE *file, int verbose )
+static void Dealer::printUsage( FILE *file, int verbose )
 {
   fprintf( file, "usage: dealer matchName gameDefFile #Hands rngSeed p1name p2name ... [options]\n" );
   fprintf( file, "  -f use fixed dealer button at table\n" );
@@ -71,44 +62,7 @@ static void printUsage( FILE *file, int verbose )
   fprintf( file, "    <0 [default] is no timeout\n" );
 }
 
-/* returns >= 0 on success, -1 on error */
-static int scanPortString( const char *string,
-			   uint16_t listenPort[ MAX_PLAYERS ] )
-{
-  int c, r, p;
-
-  c = 0;
-  for( p = 0; p < MAX_PLAYERS; ++p ) {
-
-    if( string[ c ] == 0 ) {
-      /* finished parsing the string */
-
-      break;
-    }
-
-    if( p ) {
-      /* look for separator */
-
-      if( string[ c ] != ',' ) {
-	/* numbers should be comma separated */
-
-	return -1;
-      }
-      ++c;
-    }
-
-    if( sscanf( &string[ c ], "%"SCNu16"%n", &listenPort[ p ], &r ) < 1 ) {
-      /* couldn't get a number */
-
-      return -1;
-    }
-    c += r;
-  }
-
-  return 0;
-}
-
-static void initErrorInfo( const uint32_t maxInvalidActions,
+static void Dealer::initErrorInfo( const uint32_t maxInvalidActions,
 			   const uint64_t maxResponseMicros,
 			   const uint64_t maxUsedHandMicros,
 			   const uint64_t maxUsedMatchMicros,
@@ -131,7 +85,7 @@ static void initErrorInfo( const uint32_t maxInvalidActions,
 
 /* update the number of invalid actions for seat
    returns >= 0 if match should continue, -1 for failure */
-static int checkErrorInvalidAction( const uint8_t seat, ErrorInfo *info )
+static int Dealer::checkErrorInvalidAction( const uint8_t seat, ErrorInfo *info )
 {
   ++( info->numInvalidActions[ seat ] );
 
@@ -144,7 +98,7 @@ static int checkErrorInvalidAction( const uint8_t seat, ErrorInfo *info )
 
 /* update the time used by seat
    returns >= 0 if match should continue, -1 for failure */
-static int checkErrorTimes( const uint8_t seat,
+static int Dealer::checkErrorTimes( const uint8_t seat,
 			    const struct timeval *sendTime,
 			    const struct timeval *recvTime,
 			    ErrorInfo *info )
@@ -186,7 +140,7 @@ static int checkErrorTimes( const uint8_t seat,
 
 /* note that there is a new hand
    returns >= 0 if match should continue, -1 for failure */
-static int checkErrorNewHand( const Game *game, ErrorInfo *info )
+static int Dealer::checkErrorNewHand( const Game *game, ErrorInfo *info )
 {
   uint8_t p;
 
@@ -198,20 +152,20 @@ static int checkErrorNewHand( const Game *game, ErrorInfo *info )
 }
 
 
-static uint8_t seatToPlayer( const Game *game, const uint8_t player0Seat,
+static uint8_t Dealer::seatToPlayer( const Game *game, const uint8_t player0Seat,
 			     const uint8_t seat )
 {
   return ( seat + game->numPlayers - player0Seat ) % game->numPlayers;
 }
 
-static uint8_t playerToSeat( const Game *game, const uint8_t player0Seat,
+static uint8_t Dealer::playerToSeat( const Game *game, const uint8_t player0Seat,
 			     const uint8_t player )
 {
   return ( player + player0Seat ) % game->numPlayers;
 }
 
 /* returns >= 0 if match should continue, -1 for failure */
-static int sendPlayerMessage( const Game *game, const MatchState *state,
+static int Dealer::sendPlayerMessage( const Game *game, const MatchState *state,
 			      const int quiet, const uint8_t seat,
 			      const int seatFD, struct timeval *sendTime )
 {
@@ -235,8 +189,8 @@ static int sendPlayerMessage( const Game *game, const MatchState *state,
   if( write( seatFD, line, c ) != c ) {
     /* couldn't send the line */
 
-    fprintf( stderr, "ERROR: could not send state to seat %" PRIu8 "\n",
-	     (unsigned char)(seat + 1) );
+    fprintf( stderr, "ERROR: could not send state to seat %"PRIu8"\n",
+	     seat + 1 );
     return -1;
   }
 
@@ -246,7 +200,7 @@ static int sendPlayerMessage( const Game *game, const MatchState *state,
   /* log the message */
   if( !quiet ) {
     fprintf( stderr, "TO %d at %zu.%.06zu %s", seat + 1,
-	     (size_t)sendTime->tv_sec, (size_t)sendTime->tv_usec, line );
+	     sendTime->tv_sec, sendTime->tv_usec, line );
   }
 
   return 0;
@@ -254,7 +208,7 @@ static int sendPlayerMessage( const Game *game, const MatchState *state,
 
 /* returns >= 0 if action/size has been set to a valid action
    returns -1 for failure (disconnect, timeout, too many bad actions, etc) */
-static int readPlayerResponse( const Game *game,
+static int Dealer::readPlayerResponse( const Game *game,
 			       const MatchState *state,
 			       const int quiet,
 			       const uint8_t seat,
@@ -282,8 +236,8 @@ static int readPlayerResponse( const Game *game,
       uint64_t micros_spent =
 	(uint64_t)( after.tv_sec - start.tv_sec ) * 1000000
 	+ ( after.tv_usec - start.tv_usec );
-      fprintf( stderr, "ERROR: could not get action from seat %" PRIu8 "\n",
-	       (unsigned char)(seat + 1) );
+      fprintf( stderr, "ERROR: could not get action from seat %"PRIu8"\n",
+	       seat + 1 );
       // Print out how much time has passed so we can see if this was a
       // timeout as opposed to some other sort of failure (e.g., socket
       // closing).
@@ -299,7 +253,7 @@ static int readPlayerResponse( const Game *game,
     /* log the response */
     if( !quiet ) {
       fprintf( stderr, "FROM %d at %zu.%06zu %s", seat + 1,
-	       (size_t)recvTime->tv_sec, (size_t)recvTime->tv_usec, line );
+	       recvTime->tv_sec, recvTime->tv_usec, line );
     }
 
     /* ignore comments */
@@ -310,7 +264,7 @@ static int readPlayerResponse( const Game *game,
     /* check for any timeout issues */
     if( checkErrorTimes( seat, sendTime, recvTime, errorInfo ) < 0 ) {
 
-      fprintf( stderr, "ERROR: seat %" PRIu8 " ran out of time\n", (unsigned char)(seat + 1) );
+      fprintf( stderr, "ERROR: seat %"PRIu8" ran out of time\n", seat + 1 );
       return -1;
     }
 
@@ -369,7 +323,7 @@ static int readPlayerResponse( const Game *game,
 }
 
 /* returns >= 0 if match should continue, -1 for failure */
-static int setUpNewHand( const Game *game, const uint8_t fixedSeats,
+static int Dealer::setUpNewHand( const Game *game, const uint8_t fixedSeats,
 			 uint32_t *handId, uint8_t *player0Seat,
 			 rng_state_t *rng, ErrorInfo *errorInfo, State *state )
 {
@@ -393,7 +347,7 @@ static int setUpNewHand( const Game *game, const uint8_t fixedSeats,
 }
 
 /* returns >= 0 if match should continue, -1 for failure */
-static int processTransactionFile( const Game *game, const int fixedSeats,
+static int Dealer::processTransactionFile( const Game *game, const int fixedSeats,
 				   uint32_t *handId, uint8_t *player0Seat,
 				   rng_state_t *rng, ErrorInfo *errorInfo,
 				   double totalValue[ MAX_PLAYERS ],
@@ -419,9 +373,9 @@ static int processTransactionFile( const Game *game, const int fixedSeats,
     }
 
     /* ACTION HANDID SEND RECV */
-    if( sscanf( &line[ c ], " %" SCNu32 " %zu.%06zu %zu.%06zu%n", &h,
-		(size_t*)&sendTime.tv_sec, (size_t*)&sendTime.tv_usec,
-		(size_t*)&recvTime.tv_sec, (size_t*)&recvTime.tv_usec, &r ) < 4 ) {
+    if( sscanf( &line[ c ], " %"SCNu32" %zu.%06zu %zu.%06zu%n", &h,
+		&sendTime.tv_sec, &sendTime.tv_usec,
+		&recvTime.tv_sec, &recvTime.tv_usec, &r ) < 4 ) {
 
       fprintf( stderr, "ERROR: could not parse transaction stamp %s", line );
       return -1;
@@ -448,8 +402,8 @@ static int processTransactionFile( const Game *game, const int fixedSeats,
     if( checkErrorTimes( s, &sendTime, &recvTime, errorInfo ) < 0 ) {
 
       fprintf( stderr,
-	       "ERROR: seat %" PRIu8 " ran out of time in transaction file\n",
-	       (unsigned char)(s + 1) );
+	       "ERROR: seat %"PRIu8" ran out of time in transaction file\n",
+	       s + 1 );
       return -1;
     }
 
@@ -479,7 +433,7 @@ static int processTransactionFile( const Game *game, const int fixedSeats,
 }
 
 /* returns >= 0 if match should continue, -1 on failure */
-static int logTransaction( const Game *game, const State *state,
+static int Dealer::logTransaction( const Game *game, const State *state,
 			   const Action *action,
 			   const struct timeval *sendTime,
 			   const struct timeval *recvTime,
@@ -496,9 +450,9 @@ static int logTransaction( const Game *game, const State *state,
   }
 
   r = snprintf( &line[ c ], MAX_LINE_LEN - c,
-		" %" PRIu32 " %zu.%06zu %zu.%06zu\n",
-		state->handId, (size_t)sendTime->tv_sec, (size_t)sendTime->tv_usec,
-		(size_t)recvTime->tv_sec, (size_t)recvTime->tv_usec );
+		" %"PRIu32" %zu.%06zu %zu.%06zu\n",
+		state->handId, sendTime->tv_sec, sendTime->tv_usec,
+		recvTime->tv_sec, recvTime->tv_usec );
   if( r < 0 ) {
 
     fprintf( stderr, "ERROR: transaction message too long\n" );
@@ -517,7 +471,7 @@ static int logTransaction( const Game *game, const State *state,
 }
 
 /* returns >= 0 if match should continue, -1 on failure */
-static int checkVersion( const uint8_t seat,
+static int Dealer::checkVersion( const uint8_t seat,
 			 ReadBuf *readBuf )
 {
   uint32_t major, minor, rev;
@@ -527,8 +481,8 @@ static int checkVersion( const uint8_t seat,
   if( getLine( readBuf, MAX_LINE_LEN, line, -1 ) <= 0 ) {
 
     fprintf( stderr,
-	     "ERROR: could not read version string from seat %" PRIu8 "\n",
-	     (unsigned char)(seat + 1) );
+	     "ERROR: could not read version string from seat %"PRIu8"\n",
+	     seat + 1 );
     return -1;
   }
 
@@ -549,7 +503,7 @@ static int checkVersion( const uint8_t seat,
 }
 
 /* returns >= 0 if match should continue, -1 on failure */
-static int addToLogFile( const Game *game, const State *state,
+static int Dealer::addToLogFile( const Game *game, const State *state,
 			 const double value[ MAX_PLAYERS ],
 			 const uint8_t player0Seat,
 			 char *seatName[ MAX_PLAYERS ], FILE *logFile )
@@ -611,7 +565,7 @@ static int addToLogFile( const Game *game, const State *state,
 }
 
 /* returns >= 0 if match should continue, -1 on failure */
-static int printInitialMessage( const char *matchName, const char *gameName,
+static int Dealer::printInitialMessage( const char *matchName, const char *gameName,
 				const uint32_t numHands, const uint32_t seed,
 				const ErrorInfo *info, FILE *logFile )
 {
@@ -640,7 +594,7 @@ static int printInitialMessage( const char *matchName, const char *gameName,
 }
 
 /* returns >= 0 if match should continue, -1 on failure */
-static int printFinalMessage( const Game *game, char *seatName[ MAX_PLAYERS ],
+static int Dealer::printFinalMessage( const Game *game, char *seatName[ MAX_PLAYERS ],
 			      const double totalValue[ MAX_PLAYERS ],
 			      FILE *logFile )
 {
@@ -716,7 +670,7 @@ static int printFinalMessage( const Game *game, char *seatName[ MAX_PLAYERS ],
    initialise the state
 
    returns >=0 if the match finished correctly, -1 on error */
-static int gameLoop( const Game *game, char *seatName[ MAX_PLAYERS ],
+static int Dealer::gameLoop( const Game *game, char *seatName[ MAX_PLAYERS ],
 		     const uint32_t numHands, const int quiet,
 		     const int fixedSeats, rng_state_t *rng,
 		     ErrorInfo *errorInfo, const int seatFD[ MAX_PLAYERS ],
@@ -743,7 +697,7 @@ static int gameLoop( const Game *game, char *seatName[ MAX_PLAYERS ],
   gettimeofday( &sendTime, NULL );
   if( !quiet ) {
     fprintf( stderr, "STARTED at %zu.%06zu\n",
-	     (size_t)sendTime.tv_sec, (size_t)sendTime.tv_usec );
+	     sendTime.tv_sec, sendTime.tv_usec );
   }
 
   /* start at the first hand */
@@ -888,7 +842,7 @@ static int gameLoop( const Game *game, char *seatName[ MAX_PLAYERS ],
   if( !quiet ) {
     gettimeofday( &t, NULL );
     fprintf( stderr, "FINISHED at %zu.%06zu\n",
-	     (size_t)sendTime.tv_sec, (size_t)sendTime.tv_usec );
+	     sendTime.tv_sec, sendTime.tv_usec );
   }
   if( printFinalMessage( game, seatName, totalValue, logFile ) < 0 ) {
     /* error messages already handled in function */
@@ -899,14 +853,13 @@ static int gameLoop( const Game *game, char *seatName[ MAX_PLAYERS ],
   return 0;
 }
 
-int main( int argc, char **argv )
+int Dealer::run( int argc, char **argv )
 {
   int i, listenSocket[ MAX_PLAYERS ], v, longOpt;
   int fixedSeats, quiet, append;
   int seatFD[ MAX_PLAYERS ];
   FILE *file, *logFile, *transactionFile;
   ReadBuf *readBuf[ MAX_PLAYERS ];
-  Game *game;
   rng_state_t rng;
   ErrorInfo errorInfo;
   struct sockaddr_in addr;
@@ -1056,11 +1009,11 @@ int main( int argc, char **argv )
     case 'p':
       /* port specification */
 
-      if( scanPortString( optarg, listenPort ) < 0 ) {
-
-	fprintf( stderr, "ERROR: bad port string %s\n", optarg );
-	exit( EXIT_FAILURE );
-      }
+//      if( scanPortString( optarg, listenPort ) < 0 ) {
+//
+//	fprintf( stderr, "ERROR: bad port string %s\n", optarg );
+//	exit( EXIT_FAILURE );
+//      }
 
       break;
 
@@ -1107,8 +1060,8 @@ int main( int argc, char **argv )
 	     argv[ optind + 1 ] );
     exit( EXIT_FAILURE );
   }
-  game = readGame( file );
-  if( game == NULL ) {
+  m_pGame = readGame( file );
+  if( m_pGame == NULL ) {
 
     fprintf( stderr, "ERROR: could not read game %s\n", argv[ optind + 1 ] );
     exit( EXIT_FAILURE );
@@ -1116,12 +1069,12 @@ int main( int argc, char **argv )
   fclose( file );
 
   /* save the seat names */
-  if( optind + 4 + game->numPlayers > argc ) {
+  if( optind + 4 + m_pGame->numPlayers > argc ) {
 
     printUsage( stdout, 0 );
     exit( EXIT_FAILURE );
   }
-  for( i = 0; i < game->numPlayers; ++i ) {
+  for( i = 0; i < m_pGame->numPlayers; ++i ) {
 
     seatName[ i ] = argv[ optind + 4 + i ];
   }
@@ -1197,7 +1150,7 @@ int main( int argc, char **argv )
 		 maxUsedPerHandMicros * numHands, &errorInfo );
 
   /* open sockets for players to connect to */
-  for( i = 0; i < game->numPlayers; ++i ) {
+  for( i = 0; i < m_pGame->numPlayers; ++i ) {
 
     listenSocket[ i ] = getListenSocket( &listenPort[ i ] );
     if( listenSocket[ i ] < 0 ) {
@@ -1209,7 +1162,7 @@ int main( int argc, char **argv )
   }
 
   /* print out the final port assignments */
-  for( i = 0; i < game->numPlayers; ++i ) {
+  for( i = 0; i < m_pGame->numPlayers; ++i ) {
 
     printf( i ? " %"PRIu16 : "%"PRIu16, listenPort[ i ] );
   }
@@ -1222,15 +1175,15 @@ int main( int argc, char **argv )
 
   /* wait for each player to connect */
   gettimeofday( &startTime, NULL );
-  for( i = 0; i < game->numPlayers; ++i ) {
+  for( i = 0; i < m_pGame->numPlayers; ++i ) {
 
     if( startTimeoutMicros >= 0 ) {
-      int64_t startTimeLeft;
+      uint64_t startTimeLeft;
       fd_set fds;
 
       gettimeofday( &tv, NULL );
       startTimeLeft = startTimeoutMicros
-	- (int64_t)( tv.tv_sec - startTime.tv_sec ) * 1000000
+	- (uint64_t)( tv.tv_sec - startTime.tv_sec ) * 1000000
 	- ( tv.tv_usec - startTime.tv_usec );
       if( startTimeLeft < 0 ) {
 
@@ -1249,26 +1202,10 @@ int main( int argc, char **argv )
 	exit( EXIT_FAILURE );
       }
     }
-
-    addrLen = sizeof( addr );
-    seatFD[ i ] = accept( listenSocket[ i ],
-			  (struct sockaddr *)&addr, &addrLen );
-    if( seatFD[ i ] < 0 ) {
-
-      fprintf( stderr, "ERROR: seat %d could not connect\n", i + 1 );
-      exit( EXIT_FAILURE );
-    }
-    close( listenSocket[ i ] );
-
-    v = 1;
-    setsockopt( seatFD[ i ], IPPROTO_TCP, TCP_NODELAY,
-		(char *)&v, sizeof(int) );
-
-    readBuf[ i ] = createReadBuf( seatFD[ i ] );
   }
 
   /* play the match */
-  if( gameLoop( game, seatName, numHands, quiet, fixedSeats, &rng, &errorInfo,
+  if( gameLoop( m_pGame, seatName, numHands, quiet, fixedSeats, &rng, &errorInfo,
 		seatFD, readBuf, logFile, transactionFile ) < 0 ) {
     /* should have already printed an error message */
 
@@ -1283,7 +1220,7 @@ int main( int argc, char **argv )
   if( logFile != NULL ) {
     fclose( logFile );
   }
-  free( game );
+  free( m_pGame );
 
   return EXIT_SUCCESS;
 }

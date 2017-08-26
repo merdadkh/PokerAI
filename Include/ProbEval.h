@@ -28,7 +28,7 @@ public:
 	};
 	inline bool operator !=(const FlushSymmType &rhs) const { return !(*this == rhs); }
 
-	inline bool operator< (const FlushSymmType& rhs) const;
+	bool operator< (const FlushSymmType& rhs) const;
 	inline bool operator> (const FlushSymmType& rhs) const { return (rhs < (*this)); }
 	inline bool operator<=(const FlushSymmType& rhs) const { return !((*this) > rhs); }
 	inline bool operator>=(const FlushSymmType& rhs) const { return !((*this) < rhs); }

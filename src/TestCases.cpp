@@ -8,6 +8,7 @@
 
 void TestHandDescribtion() {
 
+    int s = 0;
 	string hand;
 	cout << "Type a hand (no spaces):";
 	cin >> hand;
@@ -426,7 +427,6 @@ void TestFlopLoadFromFile() {
 	start = std::clock();
 
 	unsigned long long flopMask = CHandEval::ParseHand(flop);
-
 	vector<vector<double> >* vector = CProbEval::LoadFlopProb_fromFile(flopMask);
 
 	duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;

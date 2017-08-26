@@ -221,7 +221,7 @@ int main( int argc, char **argv )
 	} else {
 	  /* just a message, print it out */
 
-	  if( fwrite( line, 1, i, stdout ) < 0 ) {
+	  if( (int)fwrite( line, 1, i, stdout ) < 0 ) { // Always False
 
 	    fprintf( stderr, "ERROR: failed while printing server message\n" );
 	    exit( EXIT_FAILURE );

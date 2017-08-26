@@ -2,7 +2,7 @@
 #ifndef Hand_ITER_H
 #define Hand_ITER_H
 
-using namespace std;
+//using namespace std;
 
 #include <vector>
 #include <map>
@@ -15,8 +15,8 @@ private:
 	static const int MaxNumberOfCards = 9;
 
 	int m_NumberOfCards;
+        unsigned long long m_shared;
 	unsigned long long m_dead;
-	unsigned long long m_shared;
 
 	unsigned long long m_mask;
 	unsigned long long m_maskTillCard[MaxNumberOfCards];
@@ -47,7 +47,7 @@ public:		// Lookup Tables
 
 	static const vector<vector<unsigned long long> > Pocket169Table;
 
-	enum PocketHand169Enum : int
+	enum PocketHand169Enum
 	{
 		/// <summary>
 		/// Not a PocketPairType
