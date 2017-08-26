@@ -13,3 +13,4 @@ project_acpc_server/example_player
 *.std
 project_acpc_server/player1
 src/PokerBot
+Makefile
