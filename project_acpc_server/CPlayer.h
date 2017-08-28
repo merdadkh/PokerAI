@@ -15,6 +15,7 @@
 #define CPLAYER_H
 
 #include "ParentPlayer.h"
+#include <vector>
 
 class CPlayer : public ParentPlayer {
 public:
@@ -24,6 +25,8 @@ public:
     
     Action* ComputeNextAction();
 
+    
+    std::vector<std::vector<double> >* m_pPreFlopProb;
 private:
 
 };

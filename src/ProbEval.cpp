@@ -380,3 +380,35 @@ vector<vector<double> >* CProbEval::LoadFlopProb_fromFile(unsigned long long Flo
 
 	return &vFlopProb;
 }
+
+
+vector<vector<double> > CProbEval::vPreFlopProb = vector<vector<double> >(POCKET_HAND_COUNT, vector<double>(POCKET_HAND_COUNT, -1));
+
+vector<vector<double> >* CProbEval::LoadPreFlopProb_fromFile(){
+    
+    vPreFlopProb = vector<vector<double> >(POCKET_HAND_COUNT, vector<double>(POCKET_HAND_COUNT, -1));
+
+    ///////////////////// Loading Files to Vectors
+    ifstream inFile;
+    string filePath = "/Users/Mehrdad/GitHub/PokerAI/PreFlopFinal/PreFlopProb";
+    string line;
+    char dummy[20];
+    // Write2File
+    inFile.open(filePath.c_str());
+    if (inFile.is_open()) {
+        getline(inFile, line);
+        for (size_t h1 = 0; h1 < POCKET_HAND_COUNT; h1++) {
+            inFile >> dummy;
+            inFile >> dummy;
+            for (size_t h2 = 0; h2 < POCKET_HAND_COUNT; h2++) {
+                inFile >> vPreFlopProb[h1][h2];
+            }            
+        }     
+        inFile.close();	
+    }
+    else{
+        cout << "Pre Flop File not opened." << endl;        
+    }    
+        
+    return &vPreFlopProb;
+}

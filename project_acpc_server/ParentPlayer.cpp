@@ -113,7 +113,7 @@ Action* ParentPlayer::ComputeNextAction(){
 
 void ParentPlayer:: DoAction(Action* action){
     
-    assert( isValidAction( m_pGame, &m_MatchState.state, 0, action ) );
+    assert( isValidAction( m_pGame, &m_MatchState.state, 1, action ) );
     int r = printAction( m_pGame, action, MAX_LINE_LEN - m_LineLen - 2,
 		     &m_Line[ m_LineLen ] );
     

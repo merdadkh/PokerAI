@@ -126,7 +126,7 @@ Game *readGame( FILE *file );
 
 void printGame( FILE *file, const Game *game );
 
-/* initialise a state so that it is at the beginning of a hand
+/* initialize a state so that it is at the beginning of a hand
    DOES NOT DEAL OUT CARDS */
 void initState( const Game *game, const uint32_t handId, State *state );
 

@@ -90,6 +90,9 @@ public:
 	static string  RankUnsuit2Str(unsigned long long FlopMaskUnsuit);
 	
 	static vector<vector<double> >* LoadFlopProb_fromFile(unsigned long long Flop);
+	static vector<vector<double> >* LoadPreFlopProb_fromFile();
+     
+        static vector<vector<double> > vPreFlopProb;
 
 private:
 

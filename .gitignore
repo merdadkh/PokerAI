@@ -14,3 +14,8 @@ project_acpc_server/example_player
 project_acpc_server/player1
 src/PokerBot
 Makefile
+*.a
+project_acpc_server/Makefile
+project_acpc_server/Makefile
+project_acpc_server/DebugFile.txt
+project_acpc_server/Makefile

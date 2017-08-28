@@ -11,7 +11,13 @@ add_executable(bm_run_matches bm_run_matches.c net.c)
 
 add_executable(dealer game.c game.h evalHandTables rng.c rng.h dealer.c net.c)
 
-
 add_executable(example_player game.c evalHandTables rng.c example_player.cpp net.c ParentPlayer.cpp)
 
 add_executable(player1 game.c evalHandTables rng.c player1.cpp net.c ParentPlayer.cpp CPlayer.cpp)
+
+add_library(AcpcLib game.c evalHandTables rng.c net.c ParentPlayer.cpp CPlayer.cpp)
+
+
+link_directories(${PokerBot_SOURCE_DIR}/src)
+
+target_link_libraries(player1 ProbEvalLib)

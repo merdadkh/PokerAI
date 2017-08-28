@@ -4,40 +4,34 @@
 #include "TestCases.h"
 //#include "PlayerParent.h"
 //#include "Dealer.h"
+#include "../project_acpc_server/CPlayer.h"
+#include "ProbEval.h"
 
 
 int main(int argc, char *argv[]) {
 
-    //while (ans == "y")
-    //{
-    //	cout << "Testing Describtion" << endl;
-    //	TestHandDescribtion();
-    //	cout << "Another Test(y/n) :";
-    //	cin >> ans;
-    //} 
-
-    //ComputePreFlopPrFull();
-    //ComputeSaveFlopProb2File();
-
-    TestFlopLoadFromFile();
-
-    //TestPostFlopTime();
-    //Create_TwoCard2HighCardRankTbl();
-
-
-    //string ans = "y";
-
-    //while (ans == "y")
-    //{
-    //	cout << "Testing Flush Draw" << endl;
-    //	TestFlushDraw();
-    //	cout << "Another Test(y/n) :";
-    //	cin >> ans;
-    //}
-
-    //Dealer dealer;
-    //PlayerParent player;
     
+    string handStr = "AsQs";
+
+    unsigned long long handMask = CHandEval::ParseHand(handStr);
+    size_t hand_index = CHandIterator::PocketMask2IndexMap.find(handMask)->second;
+
+    cout << "HandIndex: " << hand_index << endl;
+
+    double sum = 0, WinProb = -1;
+    int count = 0;
+    vector<vector<double> >* vec = CProbEval::LoadPreFlopProb_fromFile();
+        for (size_t i = 0; i < POCKET_HAND_COUNT; i++) {
+          //  cout << vec->at(hand_index).at(i) << "\t";
+            if (vec->at(hand_index).at(i) >= 0)
+            {
+                sum += vec->at(hand_index).at(i);
+                count++;    
+            }	
+        }
+        WinProb = sum / count;
+
+        cout << "WinProb: " << WinProb << "\t Sum / Count :" << sum << "/"<<count;
     
     
     return 0;
